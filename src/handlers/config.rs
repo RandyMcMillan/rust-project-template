@@ -91,7 +91,7 @@ impl CompleteConfig {
         let path_str = config_path("config.toml");
 
         let p = Path::new(&path_str);
-        println!("path_str:\n{:?}", p);
+        //println!("path_str:\n{:?}", p);
 
         if !p.exists() {
             create_dir_all(p.parent().unwrap()).unwrap();
@@ -99,7 +99,7 @@ impl CompleteConfig {
             let default_toml_string = toml::to_string(&Self::default()).unwrap();
             let mut file = File::create(path_str.clone()).unwrap();
             file.write_all(default_toml_string.as_bytes()).unwrap();
-            println!("default_toml_string:\n{:?}", default_toml_string);
+            //println!("default_toml_string:\n{:?}", default_toml_string);
 
             let config: Self = toml::from_str(default_toml_string.as_str()).unwrap();
             print!("Configuration was generated at {path_str}, please fill it out with necessary information.");
@@ -108,7 +108,7 @@ impl CompleteConfig {
             let config: Self = toml::from_str(config_contents.as_str()).unwrap();
 
             // Remember to check for any important missing config items here!
-            println!("config_contents:\n{:?}", config);
+            //println!("config_contents:\n{:?}", config);
 
             Ok(config)
         } else {
