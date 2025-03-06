@@ -25,35 +25,52 @@ use handlers::config::CompleteConfig;
 #[command(version, about, long_about = None)]
 struct Args {
     /// Name of the person to greet
-    #[arg(short, long)]
+    #[arg(short, long, default_value = "user")]
     name: String,
 
     /// Number of times to greet
     #[arg(short, long, default_value_t = 1)]
     count: u8,
+    #[arg(short = 't', long)]
+    tui: bool,
+    #[arg(long = "cfg", default_value = "")]
+    config: String,
 }
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    //let args = Args::parse();
+    let args = Args::parse();
 
-    //for _ in 0..args.count {
-    //    println!("Hello {}!", args.name);
-    //}
+    for _ in 0..args.count {
+        println!("Hello {}!", args.name);
+    }
 
     let cmd = Command::new("MyApp")
-        .arg(Arg::new("tui")
-                .long("tui")
-                //.short('t')
-                .action(clap::ArgAction::SetTrue))
         .arg(
-            Arg::new("out")
-                .long("output")
+            Arg::new("name")
+                .long("name")
+                .short('n')
                 //.required(true)
                 .action(ArgAction::Set)
                 .default_value("-"),
         )
-        .arg(Arg::new("cfg").short('c').action(ArgAction::Set))
+        .arg(
+            Arg::new("count")
+                .long("count")
+                .short('c')
+                //.required(true)
+                .action(ArgAction::Set)
+                .default_value("0"),
+        )
+        .arg(
+            Arg::new("tui")
+                .long("tui")
+                .short('t')
+                //.required(true)
+                .action(ArgAction::SetTrue)
+                .default_value("false"),
+        )
+        .arg(Arg::new("config").long("cfg").action(ArgAction::Set))
         .get_matches();
 
     assert!(cmd.clone().contains_id("tui"));
@@ -69,7 +86,7 @@ async fn main() -> Result<()> {
 
     if let Some(c) = matches.get_one::<bool>("tui") {
         if matches.get_flag("tui") {
-            println!("Value for --tui: {c}");
+            //println!("Value for --tui: {c}");
             terminal::ui_driver(config).await;
             //assert_eq!(matches.get_flag("tui"), true);
         }
