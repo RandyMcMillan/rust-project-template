@@ -1,2 +1,2 @@
-# rust-tui-project-template
-A template for Rust TUI projects. 
+# rust-project-template
+A template for Rust BIN/TUI projects.
