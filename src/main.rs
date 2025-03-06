@@ -16,7 +16,7 @@ mod ui;
 mod utils;
 
 use clap::parser::ValueSource;
-use clap::{Arg, ArgAction, Command, Parser, Subcommand};
+use clap::{Arg, ArgAction, ArgMatches, Command, Parser, Subcommand};
 use color_eyre::eyre::{Result, WrapErr};
 
 use handlers::config::CompleteConfig;
@@ -41,7 +41,12 @@ async fn main() -> Result<()> {
     //    println!("Hello {}!", args.name);
     //}
 
-    let matches = Command::new("MyApp")
+    let cmd = Command::new("MyApp")
+        .arg(
+            Arg::new("flag")
+                .long("flag")
+                .action(clap::ArgAction::SetTrue),
+        )
         .arg(
             Arg::new("out")
                 .long("output")
@@ -50,7 +55,17 @@ async fn main() -> Result<()> {
                 .default_value("-"),
         )
         .arg(Arg::new("cfg").short('c').action(ArgAction::Set))
-        .get_matches(); // builds the instance of ArgMatches
+        .get_matches();
+
+    assert!(cmd.clone().contains_id("flag"));
+
+    let matches = cmd.clone();
+    assert!(matches.contains_id("flag"));
+
+    if let Some(c) = matches.get_one::<bool>("flag") {
+        println!("Value for --flag: {c}");
+        //assert_eq!(matches.get_flag("flag"), true);
+    }
 
     // to get information about the "cfg" argument we created, such as the value supplied we use
     // various ArgMatches methods, such as [ArgMatches::get_one]
