@@ -1,5 +1,8 @@
 [terminal]
-tick_delay = 30
+tick_delay = 3
 
 [frontend]
-margin = 1
+margin = 2
+cursor_shape = "user"
+blinking_cursor = true
+default_message = "default_message"
