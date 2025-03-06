@@ -1,14 +1,14 @@
 [package]
-name = "rust-tui-project-template"
-version = "0.1.0"
-authors = ["Xithrius <xithrius@gmail.com>"]
+name = "rust-project-template"
+version = "0.0.1"
+authors = ["randymcmillan <randy.lee.mcmillan@gmail.com>", "Xithrius <xithrius@gmail.com>"]
 edition = "2021"
-description = "A template for Rust TUI projects."
-documentation = "https://github.com/Xithrius/rust-tui-project-template"
-homepage = "https://github.com/Xithrius/rust-tui-project-template"
-repository = "https://github.com/Xithrius/rust-tui-project-template"
+description = "A template for Rust BIN/TUI projects."
+documentation = "https://github.com/randymcmillan/rust-project-template"
+homepage = "https://github.com/randymcmillan/rust-project-template"
+repository = "https://github.com/randymcmillan/rust-project-template"
 license = "MIT OR Apache-2.0"
-keywords = ["tui"]
+keywords = ["tui", "binary"]
 categories = ["command-line-utilities"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -28,7 +28,7 @@ unicode-width = "0.1.10"
 [[bin]]
 bench = false
 path = "src/main.rs"
-name = "rust-tui-project-template"
+name = "rust-project-template"
 
 [profile.dev]
 lto = "off"
