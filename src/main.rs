@@ -42,11 +42,10 @@ async fn main() -> Result<()> {
     //}
 
     let cmd = Command::new("MyApp")
-        .arg(
-            Arg::new("flag")
-                .long("flag")
-                .action(clap::ArgAction::SetTrue),
-        )
+        .arg(Arg::new("tui")
+                .long("tui")
+                //.short('t')
+                .action(clap::ArgAction::SetTrue))
         .arg(
             Arg::new("out")
                 .long("output")
@@ -57,45 +56,10 @@ async fn main() -> Result<()> {
         .arg(Arg::new("cfg").short('c').action(ArgAction::Set))
         .get_matches();
 
-    assert!(cmd.clone().contains_id("flag"));
+    assert!(cmd.clone().contains_id("tui"));
 
     let matches = cmd.clone();
-    assert!(matches.contains_id("flag"));
-
-    if let Some(c) = matches.get_one::<bool>("flag") {
-        println!("Value for --flag: {c}");
-
-
-
-
-
-        //assert_eq!(matches.get_flag("flag"), true);
-    }
-
-    // to get information about the "cfg" argument we created, such as the value supplied we use
-    // various ArgMatches methods, such as [ArgMatches::get_one]
-    if let Some(c) = matches.get_one::<String>("cfg") {
-        println!("Value for -c: {c}");
-    }
-
-    // The ArgMatches::get_one method returns an Option because the user may not have supplied
-    // that argument at runtime. But if we specified that the argument was "required" as we did
-    // with the "out" argument, we can safely unwrap because `clap` verifies that was actually
-    // used at runtime.
-    println!(
-        "Value for --output: {}",
-        matches.get_one::<String>("out").unwrap()
-    );
-
-    // You can check the presence of an argument's values
-    if matches.contains_id("out") {
-        // However, if you want to know where the value came from
-        if matches.value_source("out").expect("checked contains_id") == ValueSource::CommandLine {
-            println!("`out` set by user");
-        } else {
-            println!("`out` is defaulted");
-        }
-    }
+    assert!(matches.contains_id("tui"));
 
     color_eyre::install().unwrap();
 
@@ -103,12 +67,12 @@ async fn main() -> Result<()> {
         .wrap_err("Configuration error.")
         .unwrap();
 
-    if let Some(c) = matches.get_one::<bool>("flag") {
-        if matches.get_flag("flag") {
-        println!("Value for --flag: {c}");
-        terminal::ui_driver(config).await;
-        //assert_eq!(matches.get_flag("flag"), true);
-    }
+    if let Some(c) = matches.get_one::<bool>("tui") {
+        if matches.get_flag("tui") {
+            println!("Value for --tui: {c}");
+            terminal::ui_driver(config).await;
+            //assert_eq!(matches.get_flag("tui"), true);
+        }
     }
 
     std::process::exit(0)
