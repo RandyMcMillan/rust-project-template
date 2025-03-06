@@ -2,12 +2,11 @@ use tui::{
     backend::Backend,
     layout::{Constraint, Direction, Layout},
     terminal::Frame,
+    text::Text,
     widgets::{Block, Borders, Paragraph},
 };
 
 use crate::handlers::config::CompleteConfig;
-
-use tui::text::{Span, Text};
 
 pub fn draw_ui<T: Backend>(frame: &mut Frame<T>, config: &CompleteConfig) {
     let vertical_chunk_constraints = vec![Constraint::Min(1)];
@@ -17,7 +16,8 @@ pub fn draw_ui<T: Backend>(frame: &mut Frame<T>, config: &CompleteConfig) {
 
     let vertical_chunks = Layout::default()
         .direction(Direction::Vertical)
-        .margin(margin)
+        .horizontal_margin(margin)
+        .vertical_margin(2)
         .constraints(vertical_chunk_constraints)
         .split(frame.size());
 

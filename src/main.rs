@@ -64,6 +64,11 @@ async fn main() -> Result<()> {
 
     if let Some(c) = matches.get_one::<bool>("flag") {
         println!("Value for --flag: {c}");
+
+
+
+
+
         //assert_eq!(matches.get_flag("flag"), true);
     }
 
@@ -98,7 +103,13 @@ async fn main() -> Result<()> {
         .wrap_err("Configuration error.")
         .unwrap();
 
-    //terminal::ui_driver(config).await;
+    if let Some(c) = matches.get_one::<bool>("flag") {
+        if matches.get_flag("flag") {
+        println!("Value for --flag: {c}");
+        terminal::ui_driver(config).await;
+        //assert_eq!(matches.get_flag("flag"), true);
+    }
+    }
 
     std::process::exit(0)
 }
