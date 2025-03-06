@@ -1,0 +1,41 @@
+[package]
+name = "rust-tui-project-template"
+version = "0.1.0"
+authors = ["Xithrius <xithrius@gmail.com>"]
+edition = "2021"
+description = "A template for Rust TUI projects."
+documentation = "https://github.com/Xithrius/rust-tui-project-template"
+homepage = "https://github.com/Xithrius/rust-tui-project-template"
+repository = "https://github.com/Xithrius/rust-tui-project-template"
+license = "MIT OR Apache-2.0"
+keywords = ["tui"]
+categories = ["command-line-utilities"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+crossterm = "0.26.1"
+tui = { package = "ratatui", version = "0.20.1", default-features = false, features = [ "crossterm", "serde" ] }
+tokio = { version = "1.31.0", features = [ "full" ] }
+serde = { version = "1.0.164", features = [ "derive" ] }
+unicode-width = "0.1.10"
+unicode-segmentation = "1.10.1"
+chrono = "0.4.23"
+toml = "0.7.2"
+color-eyre = "0.6.2"
+rustyline = "11.0.0"
+
+[[bin]]
+bench = false
+path = "src/main.rs"
+name = "rust-tui-project-template"
+
+[profile.dev]
+lto = "off"
+
+[profile.dev.package.backtrace]
+opt-level = 3
+
+[profile.release]
+lto = "thin"
+debug = 1
