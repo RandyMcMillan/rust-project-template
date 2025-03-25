@@ -1,5 +1,5 @@
 default:
-  just --list
+  just --choose
 
 all:
   make all
