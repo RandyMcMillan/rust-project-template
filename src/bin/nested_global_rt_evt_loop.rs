@@ -11,7 +11,6 @@
 
 use clap::{Arg, ArgAction, Command, Parser};
 use color_eyre::eyre::{Result, WrapErr};
-use rust_project_template::prelude::evt_loop;
 use rust_project_template::prelude::evt_loop::evt_loop;
 use rust_project_template::prelude::global_rt::global_rt;
 use rust_project_template::prelude::terminal;
