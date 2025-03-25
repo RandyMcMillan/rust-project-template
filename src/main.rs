@@ -16,7 +16,9 @@ use rust_project_template::prelude::evt_loop::evt_loop;
 use rust_project_template::prelude::global_rt::global_rt;
 use rust_project_template::prelude::terminal;
 use rust_project_template::prelude::CompleteConfig;
+
 use rust_project_template::prelude::*;
+
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
@@ -46,10 +48,12 @@ struct Args {
 async fn main() -> Result<()> {
     let args = Args::parse();
 
-    global_rt().spawn(async move {
-        evt_loop().await.unwrap();
-        //evt_loop(input_rx, peer_tx, topic).await.unwrap();
-    });
+    let _ = global_rt()
+        .spawn(async move {
+            evt_loop(/* add args */).await.unwrap();
+            //evt_loop(input_rx, peer_tx, topic).await.unwrap();
+        })
+        .await;
 
     for _ in 0..args.count {
         println!("Hello {}!", args.name);
