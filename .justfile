@@ -58,6 +58,12 @@ cargo-t:
 cargo-test:
   @make cargo-test
 
+cargo-tn:
+  @make cargo-tn
+
+cargo-test-nightly:
+  @make cargo-test-nightly
+
 cargo-report:
   @make cargo-report
 
