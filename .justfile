@@ -4,9 +4,6 @@ default:
 help:
   @make help
 
-more:
-  @make more
-
 all:
   @make all
 
@@ -70,6 +67,9 @@ cargo-dist:
 cargo-dist-build:
   @make cargo-dist-build
 
-cargo-dist-manifest-global:
-  @make cargo-dist-manifest-global
+cargo-dist-manifest:
+  @make cargo-dist-manifest
+
+more:
+  @make more
 
