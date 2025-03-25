@@ -29,7 +29,7 @@ do
 
         # Write the corresponding recipe to Justfile
         echo "$target_name:" >> "$JUSTFILE"
-        echo -e "  make $target_name\n" >> "$JUSTFILE"
+        echo -e "  @make $target_name\n" >> "$JUSTFILE"
     fi
 done < "$MAKEFILE"
 
