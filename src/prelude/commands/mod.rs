@@ -12,7 +12,7 @@ use crossterm::{
 };
 use tui::{backend::CrosstermBackend, Terminal};
 
-use crate::handlers::config::{CursorType, FrontendConfig};
+use crate::prelude::handlers::config::{CursorType, FrontendConfig};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ResetCursorShape;

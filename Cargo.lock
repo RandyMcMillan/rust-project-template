@@ -666,6 +666,7 @@ dependencies = [
  "clap",
  "color-eyre",
  "crossterm",
+ "lazy_static",
  "ratatui",
  "rustyline",
  "serde",
@@ -673,6 +674,7 @@ dependencies = [
  "toml",
  "unicode-segmentation",
  "unicode-width",
+ "use",
 ]
 
 [[package]]
@@ -993,6 +995,12 @@ name = "unicode-width"
 version = "0.1.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7dd6e30e90baa6f72411720665d41d89b9a3d039dc45b8faea1ddd07f617f6af"
+
+[[package]]
+name = "use"
+version = "0.0.1-pre.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f916b8b6102de89f9999988ddc8e9bd0f119a8344e06bb19b0b03fb655769035"
 
 [[package]]
 name = "utf8parse"

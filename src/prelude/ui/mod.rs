@@ -6,7 +6,7 @@ use tui::{
     widgets::{Block, Borders, Paragraph},
 };
 
-use crate::handlers::config::CompleteConfig;
+use crate::prelude::handlers::config::CompleteConfig;
 
 pub fn draw_ui<T: Backend>(frame: &mut Frame<T>, config: &CompleteConfig) {
     let vertical_chunk_constraints = vec![Constraint::Min(1)];

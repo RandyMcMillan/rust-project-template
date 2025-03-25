@@ -3,6 +3,7 @@ use std::time::Duration;
 use crossterm::event::{self, Event as CEvent, KeyCode, KeyModifiers, MouseButton, MouseEventKind};
 use tokio::{sync::mpsc, time::Instant};
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Copy)]
 pub enum Key {
     // Keyboard controls
