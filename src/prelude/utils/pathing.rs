@@ -14,7 +14,7 @@ lazy_static! {
 }
 
 #[cfg(not(feature = "nightly"))]
-pub static BINARY_NAME: &str = "not-nightly";
+pub static BINARY_NAME: &str = "default";
 
 fn get_binary_name() -> String {
     match env::var("CARGO_BIN_NAME") {
