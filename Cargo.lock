@@ -667,6 +667,7 @@ dependencies = [
  "color-eyre",
  "crossterm",
  "lazy_static",
+ "once_cell",
  "ratatui",
  "rustyline",
  "serde",

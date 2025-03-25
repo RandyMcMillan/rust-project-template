@@ -11,9 +11,12 @@
 
 use clap::{Arg, ArgAction, Command, Parser};
 use color_eyre::eyre::{Result, WrapErr};
+use rust_project_template::prelude::evt_loop;
+use rust_project_template::prelude::evt_loop::evt_loop;
+use rust_project_template::prelude::global_rt::global_rt;
 use rust_project_template::prelude::terminal;
 use rust_project_template::prelude::CompleteConfig;
-
+use rust_project_template::prelude::*;
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
@@ -42,6 +45,11 @@ struct Args {
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = Args::parse();
+
+    global_rt().spawn(async move {
+        evt_loop().await.unwrap();
+        //evt_loop(input_rx, peer_tx, topic).await.unwrap();
+    });
 
     for _ in 0..args.count {
         println!("Hello {}!", args.name);

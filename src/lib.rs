@@ -4,8 +4,14 @@ pub mod prelude {
     pub use std::fmt::{self, Debug, Display};
     pub use std::iter::{IntoIterator, Iterator};
     pub use std::option::Option;
+
+    pub use once_cell::sync::Lazy;
+    pub use once_cell::sync::OnceCell;
+
     // Add more items as needed.
     mod commands;
+    pub mod evt_loop;
+    pub mod global_rt;
     pub mod handlers;
     pub mod terminal;
     pub mod ui;
