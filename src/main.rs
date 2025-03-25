@@ -48,15 +48,27 @@ struct Args {
 async fn main() -> Result<()> {
     let args = Args::parse();
 
-    let _ = global_rt()
+    let global_rt_result = global_rt()
         .spawn(async move {
+            println!("global_rt async task!");
             evt_loop(/* add args */).await.unwrap();
             //evt_loop(input_rx, peer_tx, topic).await.unwrap();
+            String::from("global_rt async task!")
         })
         .await;
+    println!("global_rt_result={:?}", global_rt_result?);
 
-    for _ in 0..args.count {
-        println!("Hello {}!", args.name);
+    for args in 0..args.count {
+        let global_rt_result = global_rt()
+            .spawn(async move {
+                let evt_loop_result = evt_loop(/* add args */).await.unwrap();
+                println!("evt_loop_result! {:?}", &evt_loop_result);
+                //evt_loop(input_rx, peer_tx, topic).await.unwrap();
+                println!("global_rt async task! {}", &args.clone());
+            })
+            .await;
+
+        println!("global_rt_result={:?}!", global_rt_result);
     }
 
     let cmd = Command::new("MyApp")
