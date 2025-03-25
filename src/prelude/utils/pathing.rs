@@ -29,9 +29,6 @@ pub fn config_path(file: &str) -> String {
         "linux" | "macos" => format!(
             "{}/.config/{}/{}",
             std::env::var("HOME").unwrap(),
-            //get_binary_name(),
-            //*BINARY_NAME+"bin_name",
-            //"project-template-".to_owned()+&BINARY_NAME.clone()+"-bin_name",
             "project-template-".to_owned() + &BINARY_NAME.clone() + "-bin_name",
             file
         ),
@@ -48,9 +45,6 @@ pub fn config_path(file: &str) -> String {
         "linux" | "macos" => format!(
             "{}/.config/{}/{}",
             std::env::var("HOME").unwrap(),
-            //get_binary_name(),
-            //*BINARY_NAME+"bin_name",
-            //"project-template-".to_owned()+&BINARY_NAME.clone()+"-bin_name",
             "project-template-".to_owned() + BINARY_NAME + "-bin_name",
             file
         ),
@@ -68,8 +62,6 @@ pub fn config_path(file: &str) -> String {
 #[cfg(not(feature = "nightly"))]
 mod tests {
     use super::*;
-    //use lazy_static::lazy_static;
-    //use std::env;
 
     #[test]
     #[cfg(not(feature = "nightly"))]
@@ -118,8 +110,6 @@ mod tests {
 #[cfg(feature = "nightly")]
 mod tests {
     use super::*;
-    //use lazy_static::lazy_static;
-    //use std::env;
 
     #[test]
     #[cfg(feature = "nightly")]

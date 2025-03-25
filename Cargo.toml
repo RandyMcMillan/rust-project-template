@@ -33,7 +33,6 @@ nightly = []
 [target.'cfg(nightly)'.dependencies]
 tui = { package = "ratatui", version = "0.20.1", default-features = false, features = [ "crossterm", "serde" ] }
 
-
 [[bin]]
 bench = false
 path = "src/main.rs"
