@@ -1,7 +1,7 @@
-use std::env;
 #[cfg_attr(nightly, feature(nightly))]
 #[cfg(feature = "nightly")]
 use lazy_static::lazy_static;
+use std::env;
 #[cfg(feature = "nightly")]
 lazy_static! {
     #[derive(Debug)]
@@ -24,7 +24,7 @@ fn get_binary_name() -> String {
 }
 
 pub fn config_path(file: &str) -> String {
-#[cfg(feature = "nightly")]
+    #[cfg(feature = "nightly")]
     match std::env::consts::OS {
         "linux" | "macos" => format!(
             "{}/.config/{}/{}",
@@ -32,7 +32,7 @@ pub fn config_path(file: &str) -> String {
             //get_binary_name(),
             //*BINARY_NAME+"bin_name",
             //"project-template-".to_owned()+&BINARY_NAME.clone()+"-bin_name",
-            "project-template-".to_owned()+&BINARY_NAME.clone()+"-bin_name",
+            "project-template-".to_owned() + &BINARY_NAME.clone() + "-bin_name",
             file
         ),
         "windows" => format!(
@@ -43,7 +43,7 @@ pub fn config_path(file: &str) -> String {
         ),
         _ => unimplemented!(),
     }
-#[cfg(not(feature = "nightly"))]
+    #[cfg(not(feature = "nightly"))]
     match std::env::consts::OS {
         "linux" | "macos" => format!(
             "{}/.config/{}/{}",
@@ -51,7 +51,7 @@ pub fn config_path(file: &str) -> String {
             //get_binary_name(),
             //*BINARY_NAME+"bin_name",
             //"project-template-".to_owned()+&BINARY_NAME.clone()+"-bin_name",
-            "project-template-".to_owned()+BINARY_NAME+"-bin_name",
+            "project-template-".to_owned() + BINARY_NAME + "-bin_name",
             file
         ),
         "windows" => format!(
@@ -72,7 +72,7 @@ mod tests {
     //use std::env;
 
     #[test]
-#[cfg(not(feature = "nightly"))]
+    #[cfg(not(feature = "nightly"))]
     #[cfg(target_os = "windows")]
     fn test_windows_config_path() {
         assert_eq!(
@@ -86,7 +86,7 @@ mod tests {
     }
 
     #[test]
-#[cfg(not(feature = "nightly"))]
+    #[cfg(not(feature = "nightly"))]
     #[cfg(any(target_os = "macos", target_os = "linux"))]
     fn test_unix_config_path() {
         assert_eq!(
@@ -94,13 +94,13 @@ mod tests {
             format!(
                 "{}/.config/project-template-{}-bin_name/config.toml",
                 std::env::var("HOME").unwrap(),
-                &BINARY_NAME,//.clone(),
+                &BINARY_NAME, //.clone(),
             )
         );
     }
 
     #[test]
-#[cfg(not(feature = "nightly"))]
+    #[cfg(not(feature = "nightly"))]
     #[should_panic]
     #[cfg(any(
         target_os = "ios",
@@ -122,7 +122,7 @@ mod tests {
     //use std::env;
 
     #[test]
-#[cfg(feature = "nightly")]
+    #[cfg(feature = "nightly")]
     #[cfg(target_os = "windows")]
     fn test_windows_config_path() {
         assert_eq!(
@@ -136,7 +136,7 @@ mod tests {
     }
 
     #[test]
-#[cfg(feature = "nightly")]
+    #[cfg(feature = "nightly")]
     #[cfg(any(target_os = "macos", target_os = "linux"))]
     fn test_unix_config_path() {
         assert_eq!(
@@ -150,7 +150,7 @@ mod tests {
     }
 
     #[test]
-#[cfg(feature = "nightly")]
+    #[cfg(feature = "nightly")]
     #[should_panic]
     #[cfg(any(
         target_os = "ios",
