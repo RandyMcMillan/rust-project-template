@@ -1,114 +1,148 @@
-use futures::stream::StreamExt;
-use libp2p::{gossipsub, mdns, noise, swarm::NetworkBehaviour, swarm::SwarmEvent, tcp, yamux};
-use std::collections::hash_map::DefaultHasher;
-use std::error::Error;
-use std::hash::{Hash, Hasher};
-use std::time::Duration;
-use tokio::{io, io::AsyncBufReadExt, select};
-use tracing_subscriber::EnvFilter;
+#![warn(clippy::nursery, clippy::pedantic)]
+#![allow(
+    clippy::cast_possible_truncation,
+    clippy::cast_sign_loss,
+    clippy::cast_precision_loss,
+    clippy::module_name_repetitions,
+    clippy::struct_excessive_bools,
+    clippy::unused_self,
+    clippy::future_not_send
+)]
 
-// We create a custom network behaviour that combines Gossipsub and Mdns.
-#[derive(NetworkBehaviour)]
-struct MyBehaviour {
-    gossipsub: gossipsub::Behaviour,
-    mdns: mdns::tokio::Behaviour,
+use clap::{Arg, ArgAction, Command, Parser};
+use color_eyre::eyre::{Result, WrapErr};
+use rust_project_template::prelude::chat::chat;
+use rust_project_template::prelude::evt_loop::evt_loop;
+use rust_project_template::prelude::global_rt::global_rt;
+use rust_project_template::prelude::terminal;
+use rust_project_template::prelude::CompleteConfig;
+
+use rust_project_template::prelude::*;
+
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+    /// Name of the person to greet
+    #[arg(short, long, default_value = "user")]
+    name: String,
+
+    /// Number of times to greet
+    #[arg(short, long, default_value_t = 1)]
+    count: u8,
+    #[arg(short = 't', long)]
+    tui: bool,
+    #[arg(long)]
+    chat: bool,
+    #[arg(long = "cfg", default_value = "")]
+    config: String,
 }
 
+/// REF: <https://docs.rs/clap/4.5.31/clap/struct.ArgMatches.html#method.subcommand>
+///
+/// more docs...
+///
+/// more docs...
+///
+/// more docs...
+///
+/// more docs...
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>> {
-    let _ = tracing_subscriber::fmt()
-        .with_env_filter(EnvFilter::from_default_env())
-        .try_init();
+async fn main() -> Result<()> {
+    let args = Args::parse();
 
-    let mut swarm = libp2p::SwarmBuilder::with_new_identity()
-        .with_tokio()
-        .with_tcp(
-            tcp::Config::default(),
-            noise::Config::new,
-            yamux::Config::default,
-        )?
-        .with_quic()
-        .with_behaviour(|key| {
-            // To content-address message, we can take the hash of message and use it as an ID.
-            let message_id_fn = |message: &gossipsub::Message| {
-                let mut s = DefaultHasher::new();
-                message.data.hash(&mut s);
-                gossipsub::MessageId::from(s.finish().to_string())
-            };
+    let global_rt_result = global_rt()
+        .spawn(async move {
+            println!("global_rt async task!");
+            evt_loop(/* add args */).await.unwrap();
+            //evt_loop(input_rx, peer_tx, topic).await.unwrap();
+            String::from("global_rt async task!")
+        })
+        .await;
+    println!("global_rt_result={:?}", global_rt_result?);
 
-            // Set a custom gossipsub configuration
-            let gossipsub_config = gossipsub::ConfigBuilder::default()
-                .heartbeat_interval(Duration::from_secs(10)) // This is set to aid debugging by not cluttering the log space
-                .validation_mode(gossipsub::ValidationMode::Strict) // This sets the kind of message validation. The default is Strict (enforce message signing)
-                .message_id_fn(message_id_fn) // content-address messages. No two messages of the same content will be propagated.
-                .build()
-                .map_err(|msg| io::Error::new(io::ErrorKind::Other, msg))?; // Temporary hack because `build` does not return a proper `std::error::Error`.
+    for args in 0..args.count {
+        let global_rt_result = global_rt()
+            .spawn(async move {
+                let evt_loop_result = evt_loop(/* add args */).await.unwrap();
+                println!("evt_loop_result! {:?}", &evt_loop_result);
+                //evt_loop(input_rx, peer_tx, topic).await.unwrap();
+                println!("global_rt async task! {}", &args.clone());
+            })
+            .await;
 
-            // build a gossipsub network behaviour
-            let gossipsub = gossipsub::Behaviour::new(
-                gossipsub::MessageAuthenticity::Signed(key.clone()),
-                gossipsub_config,
-            )?;
+        println!("global_rt_result={:?}!", global_rt_result);
+    }
 
-            let mdns =
-                mdns::tokio::Behaviour::new(mdns::Config::default(), key.public().to_peer_id())?;
-            Ok(MyBehaviour { gossipsub, mdns })
-        })?
-        .with_swarm_config(|c| c.with_idle_connection_timeout(Duration::from_secs(60)))
-        .build();
+    let cmd = Command::new("MyApp")
+        .arg(
+            Arg::new("name")
+                .long("name")
+                .short('n')
+                //.required(true)
+                .action(ArgAction::Set)
+                .default_value("-"),
+        )
+        .arg(
+            Arg::new("count")
+                .long("count")
+                .short('c')
+                //.required(true)
+                .action(ArgAction::Set)
+                .default_value("0"),
+        )
+        .arg(
+            Arg::new("tui")
+                .long("tui")
+                .short('t')
+                //.required(true)
+                .action(ArgAction::SetTrue)
+                .default_value("false"),
+        )
+        .arg(
+            Arg::new("chat")
+                .long("chat")
+                //.required(true)
+                .action(ArgAction::SetTrue)
+                .default_value("false"),
+        )
+        .arg(Arg::new("config").long("cfg").action(ArgAction::Set))
+        .get_matches();
 
-    // Create a Gossipsub topic
-    let topic = gossipsub::IdentTopic::new("test-net");
-    // subscribes to our topic
-    swarm.behaviour_mut().gossipsub.subscribe(&topic)?;
+    assert!(cmd.clone().contains_id("tui"));
 
-    // Read full lines from stdin
-    let mut stdin = io::BufReader::new(io::stdin()).lines();
+    let matches = cmd.clone();
+    assert!(matches.contains_id("tui"));
 
-    // Listen on all interfaces and whatever port the OS assigns
-    swarm.listen_on("/ip4/0.0.0.0/udp/0/quic-v1".parse()?)?;
-    swarm.listen_on("/ip4/0.0.0.0/tcp/0".parse()?)?;
+    color_eyre::install().unwrap();
 
-    println!("Enter messages via STDIN and they will be sent to connected peers using Gossipsub");
+    let config = CompleteConfig::new()
+        .wrap_err("Configuration error.")
+        .unwrap();
 
-    // Kick it off
-    loop {
-        select! {
-            Ok(Some(line)) = stdin.next_line() => {
-                if let Err(e) = swarm
-                    .behaviour_mut().gossipsub
-                    .publish(topic.clone(), line.as_bytes()) {
-                    println!("Publish error: {e:?}");
-                }
-            }
-            event = swarm.select_next_some() => match event {
-                SwarmEvent::Behaviour(MyBehaviourEvent::Mdns(mdns::Event::Discovered(list))) => {
-                    for (peer_id, multiaddr) in list {
-                        println!("mDNS discovered a new peer: {peer_id}");
-                        println!("{multiaddr}");
-                        swarm.behaviour_mut().gossipsub.add_explicit_peer(&peer_id);
-                    }
-                },
-                SwarmEvent::Behaviour(MyBehaviourEvent::Mdns(mdns::Event::Expired(list))) => {
-                    for (peer_id, _multiaddr) in list {
-                        println!("mDNS discover peer has expired: {peer_id}");
-                        swarm.behaviour_mut().gossipsub.remove_explicit_peer(&peer_id);
-                    }
-                },
-                SwarmEvent::Behaviour(MyBehaviourEvent::Gossipsub(gossipsub::Event::Message {
-                    propagation_source: peer_id,
-                    message_id: id,
-                    message,
-                })) => println!(
-                        "Got message: '{}' with id: {id} from peer: {peer_id}",
-                        String::from_utf8_lossy(&message.data),
-                    ),
-                SwarmEvent::NewListenAddr { address, .. } => {
-                    println!("Local node is listening on {address}");
-                }
-                _ => {}
-            }
+    if let Some(c) = matches.get_one::<bool>("tui") {
+        if matches.get_flag("tui") {
+            println!("Value for --tui: {c}");
+            terminal::ui_driver(config.clone()).await;
+            assert_eq!(matches.get_flag("tui"), true);
         }
     }
-}
+    if let Some(c) = matches.get_one::<bool>("chat") {
+        if matches.get_flag("chat") {
+    let global_rt_result = global_rt()
+        .spawn(async move {
+            println!("global_rt async task!");
+            evt_loop(/* add args */).await.unwrap();
+            //evt_loop(input_rx, peer_tx, topic).await.unwrap();
+            String::from("global_rt async task!");
+            chat().await.expect("")
+        })
+        .await;
+    println!("global_rt_result={:?}", global_rt_result?);
+            println!("Value for --chat: {c}");
+            terminal::ui_driver(config).await;
+            assert_eq!(matches.get_flag("tui"), true);
+        }
+    }
 
+    std::process::exit(0)
+}
