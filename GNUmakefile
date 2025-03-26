@@ -12,6 +12,13 @@ all: bin### 	all
 ## 	cargo b --manifest-path Cargo.toml
 bin:### 	bin
 	cargo b --manifest-path Cargo.toml
+
+## 	cargo run --bin chat-project-example
+chat-project-example:### 	chat-project-example
+	@cargo run --bin chat-project-example
+
+
+
 ##
 ##===============================================================================
 ##make cargo-*

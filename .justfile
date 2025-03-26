@@ -10,6 +10,9 @@ all:
 bin:
   @make bin
 
+chat-project-example:
+  @make chat-project-example
+
 cargo-help:
   @make cargo-help
 
