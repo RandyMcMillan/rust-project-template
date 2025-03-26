@@ -10,6 +10,7 @@ pub mod prelude {
 
     // Add more items as needed.
     mod commands;
+    pub mod chat;
     pub mod evt_loop;
     pub mod global_rt;
     pub mod handlers;

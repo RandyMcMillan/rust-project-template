@@ -11,6 +11,7 @@
 
 use clap::{Arg, ArgAction, Command, Parser};
 use color_eyre::eyre::{Result, WrapErr};
+use rust_project_template::prelude::chat::chat;
 use rust_project_template::prelude::evt_loop::evt_loop;
 use rust_project_template::prelude::global_rt::global_rt;
 use rust_project_template::prelude::terminal;
@@ -30,6 +31,8 @@ struct Args {
     count: u8,
     #[arg(short = 't', long)]
     tui: bool,
+    #[arg(long)]
+    chat: bool,
     #[arg(long = "cfg", default_value = "")]
     config: String,
 }
@@ -95,6 +98,13 @@ async fn main() -> Result<()> {
                 .action(ArgAction::SetTrue)
                 .default_value("false"),
         )
+        .arg(
+            Arg::new("chat")
+                .long("chat")
+                //.required(true)
+                .action(ArgAction::SetTrue)
+                .default_value("false"),
+        )
         .arg(Arg::new("config").long("cfg").action(ArgAction::Set))
         .get_matches();
 
@@ -112,6 +122,23 @@ async fn main() -> Result<()> {
     if let Some(c) = matches.get_one::<bool>("tui") {
         if matches.get_flag("tui") {
             println!("Value for --tui: {c}");
+            terminal::ui_driver(config.clone()).await;
+            assert_eq!(matches.get_flag("tui"), true);
+        }
+    }
+    if let Some(c) = matches.get_one::<bool>("chat") {
+        if matches.get_flag("chat") {
+    let global_rt_result = global_rt()
+        .spawn(async move {
+            println!("global_rt async task!");
+            evt_loop(/* add args */).await.unwrap();
+            //evt_loop(input_rx, peer_tx, topic).await.unwrap();
+            String::from("global_rt async task!");
+            chat().await.expect("")
+        })
+        .await;
+    println!("global_rt_result={:?}", global_rt_result?);
+            println!("Value for --chat: {c}");
             terminal::ui_driver(config).await;
             assert_eq!(matches.get_flag("tui"), true);
         }
